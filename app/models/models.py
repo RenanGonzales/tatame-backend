@@ -108,7 +108,7 @@ class TrainingSession(Base):
     created_at = Column(DateTime, server_default=func.now())
 
     user = relationship("User", back_populates="training_sessions")
-    training_cards = relationship("TrainingCard", back_populates="training_session", cascade="all, delete")
+    training_cards = relationship("TrainingCard", back_populates="training_session", cascade="all, delete", lazy="joined")
 
 
 class TrainingCard(Base):
