@@ -44,39 +44,34 @@ class User(Base):
     stripes = Column(SmallInteger, nullable=False, default=0)
     created_at = Column(DateTime, server_default=func.now())
 
-    positions = relationship("Position", back_populates="user", cascade="all, delete")
     deck = relationship("Deck", back_populates="user", cascade="all, delete")
     training_sessions = relationship("TrainingSession", back_populates="user", cascade="all, delete")
-
 
 class Position(Base):
     __tablename__ = "positions"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     name_en = Column(String(100), nullable=False)
     name_pt = Column(String(100), nullable=False)
     hierarchy_level = Column(SmallInteger, nullable=False, default=0)
     display_order = Column(SmallInteger, nullable=False, default=0)
     created_at = Column(DateTime, server_default=func.now())
 
-    user = relationship("User", back_populates="positions")
     cards = relationship("Card", back_populates="position", cascade="all, delete")
-
 
 class Card(Base):
     __tablename__ = "cards"
 
     id = Column(Integer, primary_key=True)
     position_id = Column(Integer, ForeignKey("positions.id", ondelete="CASCADE"))
-    name = Column(String(100), nullable=False)
+    name_en = Column(String(100), nullable=False)
+    name_pt = Column(String(100), nullable=False)
     type = Column(Enum(CardType), nullable=False)
     context = Column(Enum(CardContext), nullable=False, default=CardContext.gi)
     minimum_belt = Column(Enum(BeltRank), nullable=False, default=BeltRank.white)
-    notes = Column(Text)
+    notes_en = Column(Text)
+    notes_pt = Column(Text)
     illustration_url = Column(Text)
-    rusty = Column(Boolean, default=False)
-    studying = Column(Boolean, default=False)
     created_at = Column(DateTime, server_default=func.now())
 
     position = relationship("Position", back_populates="cards")
@@ -91,6 +86,8 @@ class Deck(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     card_id = Column(Integer, ForeignKey("cards.id", ondelete="CASCADE"))
     favorited = Column(Boolean, default=False)
+    rusty = Column(Boolean, default=False)
+    studying = Column(Boolean, default=False)
     slot_order = Column(SmallInteger, default=0)
 
     __table_args__ = (UniqueConstraint("user_id", "card_id"),)

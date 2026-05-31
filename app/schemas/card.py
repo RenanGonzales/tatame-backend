@@ -1,3 +1,5 @@
+# app/schemas/card.py
+
 from pydantic import BaseModel
 from enum import Enum
 
@@ -29,38 +31,38 @@ class BeltRank(str, Enum):
 
 
 class CardCreate(BaseModel):
-    name: str
+    name_en: str
+    name_pt: str
     type: CardType
     context: CardContext = CardContext.gi
     minimum_belt: BeltRank = BeltRank.white
-    notes: str | None = None
+    notes_en: str | None = None
+    notes_pt: str | None = None
     illustration_url: str | None = None
-    rusty: bool = False
-    studying: bool = False
 
 
 class CardUpdate(BaseModel):
-    name: str | None = None
+    name_en: str | None = None
+    name_pt: str | None = None
     type: CardType | None = None
     context: CardContext | None = None
     minimum_belt: BeltRank | None = None
-    notes: str | None = None
+    notes_en: str | None = None
+    notes_pt: str | None = None
     illustration_url: str | None = None
-    rusty: bool | None = None
-    studying: bool | None = None
 
 
 class CardResponse(BaseModel):
     id: int
     position_id: int
-    name: str
+    name_en: str
+    name_pt: str
     type: CardType
     context: CardContext
     minimum_belt: BeltRank
-    notes: str | None
+    notes_en: str | None
+    notes_pt: str | None
     illustration_url: str | None
-    rusty: bool
-    studying: bool
 
     class Config:
         from_attributes = True

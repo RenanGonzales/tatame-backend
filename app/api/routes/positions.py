@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.models.models import Position, User
+from app.models.models import Position
 from app.schemas.position import PositionCreate, PositionUpdate, PositionResponse
 from app.api.deps import get_current_user
 
@@ -11,20 +11,17 @@ router = APIRouter(prefix="/positions", tags=["positions"])
 
 
 @router.get("/", response_model=list[PositionResponse])
-def list_positions(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    return db.query(Position).filter(Position.user_id == current_user.id).order_by(Position.display_order).all()
+def list_positions(db: Session = Depends(get_db), _=Depends(get_current_user)):
+    return db.query(Position).order_by(Position.display_order).all()
 
 
 @router.post("/", response_model=PositionResponse, status_code=201)
 def create_position(
     data: PositionCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    _=Depends(get_current_user)
 ):
-    position = Position(**data.model_dump(), user_id=current_user.id)
+    position = Position(**data.model_dump())
     db.add(position)
     db.commit()
     db.refresh(position)
@@ -36,12 +33,9 @@ def update_position(
     position_id: int,
     data: PositionUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    _=Depends(get_current_user)
 ):
-    position = db.query(Position).filter(
-        Position.id == position_id,
-        Position.user_id == current_user.id
-    ).first()
+    position = db.query(Position).filter(Position.id == position_id).first()
     if not position:
         raise HTTPException(status_code=404, detail="Position not found")
 
@@ -57,12 +51,9 @@ def update_position(
 def delete_position(
     position_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    _=Depends(get_current_user)
 ):
-    position = db.query(Position).filter(
-        Position.id == position_id,
-        Position.user_id == current_user.id
-    ).first()
+    position = db.query(Position).filter(Position.id == position_id).first()
     if not position:
         raise HTTPException(status_code=404, detail="Position not found")
 
