@@ -1,9 +1,11 @@
 from fastapi import FastAPI
-from app.api.routes import auth
+from app.api.routes import auth, positions, cards
 
 app = FastAPI(title="Tatame API")
 
 app.include_router(auth.router)
+app.include_router(positions.router)
+app.include_router(cards.router)
 
 @app.get("/")
 def root():
