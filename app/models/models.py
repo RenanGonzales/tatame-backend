@@ -1,3 +1,5 @@
+# app/models/models.py
+
 import enum
 from sqlalchemy import Column, Integer, String, Boolean, SmallInteger, Text, Date, DateTime, ForeignKey, Enum, UniqueConstraint
 from sqlalchemy.orm import relationship
@@ -52,7 +54,8 @@ class Position(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    name = Column(String(100), nullable=False)
+    name_en = Column(String(100), nullable=False)
+    name_pt = Column(String(100), nullable=False)
     hierarchy_level = Column(SmallInteger, nullable=False, default=0)
     display_order = Column(SmallInteger, nullable=False, default=0)
     created_at = Column(DateTime, server_default=func.now())
@@ -108,7 +111,7 @@ class TrainingSession(Base):
     created_at = Column(DateTime, server_default=func.now())
 
     user = relationship("User", back_populates="training_sessions")
-    training_cards = relationship("TrainingCard", back_populates="training_session", cascade="all, delete", lazy="joined")
+    training_cards = relationship("TrainingCard", back_populates="training_session", cascade="all, delete")
 
 
 class TrainingCard(Base):
