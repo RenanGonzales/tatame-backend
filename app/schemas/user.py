@@ -22,6 +22,12 @@ class UserCreate(BaseModel):
     stripes: int = 0
 
 
+class UserUpdate(BaseModel):
+    name: str | None = None
+    belt: BeltRank | None = None
+    stripes: int | None = None
+
+
 class UserResponse(BaseModel):
     id: int
     name: str
