@@ -5,17 +5,24 @@ from enum import Enum
 
 
 class CardType(str, Enum):
-    sweep = "Sweep"
-    attack = "Attack"
-    recovery = "Recovery"
-    control = "Control"
-    defense = "Defense"
+    takedown = "takedown"
+    guard_pass = "guard_pass"
+    sweep = "sweep"
+    attack = "attack"
+    recovery = "recovery"
+    control = "control"
+    defense = "defense"
+
+class CardPerspective(str, Enum):
+    top = "top"
+    bottom = "bottom"
+    neutral = "neutral"
 
 
 class CardContext(str, Enum):
-    gi = "Gi"
-    nogi = "No-Gi"
-    mma = "MMA"
+    gi = "gi"
+    nogi = "nogi"
+    mma = "mma"
 
 
 class BeltRank(str, Enum):
@@ -39,6 +46,7 @@ class CardCreate(BaseModel):
     notes_en: str | None = None
     notes_pt: str | None = None
     illustration_url: str | None = None
+    perspective: CardPerspective = CardPerspective.neutral
 
 
 class CardUpdate(BaseModel):
@@ -50,6 +58,7 @@ class CardUpdate(BaseModel):
     notes_en: str | None = None
     notes_pt: str | None = None
     illustration_url: str | None = None
+    perspective: CardPerspective | None = None
 
 
 class CardResponse(BaseModel):
@@ -63,6 +72,7 @@ class CardResponse(BaseModel):
     notes_en: str | None
     notes_pt: str | None
     illustration_url: str | None
+    perspective: CardPerspective | None = None
 
     class Config:
         from_attributes = True

@@ -1,18 +1,17 @@
+# app/api/routes/cards.py
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.models.models import Card, Position, User
+from app.models.models import Card, Position
 from app.schemas.card import CardCreate, CardUpdate, CardResponse
 from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/positions/{position_id}/cards", tags=["cards"])
 
 
-def get_position_or_404(position_id: int, user: User, db: Session) -> Position:
-    position = db.query(Position).filter(
-        Position.id == position_id,
-        Position.user_id == user.id
-    ).first()
+def get_position_or_404(position_id: int, db: Session) -> Position:
+    position = db.query(Position).filter(Position.id == position_id).first()
     if not position:
         raise HTTPException(status_code=404, detail="Position not found")
     return position
@@ -22,9 +21,9 @@ def get_position_or_404(position_id: int, user: User, db: Session) -> Position:
 def list_cards(
     position_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    _=Depends(get_current_user)
 ):
-    get_position_or_404(position_id, current_user, db)
+    get_position_or_404(position_id, db)
     return db.query(Card).filter(Card.position_id == position_id).all()
 
 
@@ -33,9 +32,9 @@ def create_card(
     position_id: int,
     data: CardCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    _=Depends(get_current_user)
 ):
-    get_position_or_404(position_id, current_user, db)
+    get_position_or_404(position_id, db)
     card = Card(**data.model_dump(), position_id=position_id)
     db.add(card)
     db.commit()
@@ -49,9 +48,9 @@ def update_card(
     card_id: int,
     data: CardUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    _=Depends(get_current_user)
 ):
-    get_position_or_404(position_id, current_user, db)
+    get_position_or_404(position_id, db)
     card = db.query(Card).filter(
         Card.id == card_id,
         Card.position_id == position_id
@@ -72,9 +71,9 @@ def delete_card(
     position_id: int,
     card_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    _=Depends(get_current_user)
 ):
-    get_position_or_404(position_id, current_user, db)
+    get_position_or_404(position_id, db)
     card = db.query(Card).filter(
         Card.id == card_id,
         Card.position_id == position_id

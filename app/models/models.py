@@ -20,17 +20,23 @@ class BeltRank(str, enum.Enum):
 
 
 class CardType(str, enum.Enum):
-    sweep = "Sweep"
-    attack = "Attack"
-    recovery = "Recovery"
-    control = "Control"
-    defense = "Defense"
+    takedown = "takedown"
+    guard_pass = "guard_pass"
+    sweep = "sweep"
+    attack = "attack"
+    recovery = "recovery"
+    control = "control"
+    defense = "defense"
 
+class CardPerspective(str, enum.Enum):
+    top = "top"
+    bottom = "bottom"
+    neutral = "neutral"
 
 class CardContext(str, enum.Enum):
-    gi = "Gi"
-    nogi = "No-Gi"
-    mma = "MMA"
+    gi = "gi"
+    nogi = "nogi"
+    mma = "mma"
 
 
 class User(Base):
@@ -73,6 +79,7 @@ class Card(Base):
     notes_pt = Column(Text)
     illustration_url = Column(Text)
     created_at = Column(DateTime, server_default=func.now())
+    perspective = Column(Enum(CardPerspective, name='cardperspective'), nullable=True, default=CardPerspective.neutral)
 
     position = relationship("Position", back_populates="cards")
     deck_entries = relationship("Deck", back_populates="card", cascade="all, delete")
