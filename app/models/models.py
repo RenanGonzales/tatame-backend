@@ -49,6 +49,7 @@ class User(Base):
     belt = Column(Enum(BeltRank), nullable=False, default=BeltRank.white)
     stripes = Column(SmallInteger, nullable=False, default=0)
     created_at = Column(DateTime, server_default=func.now())
+    games = relationship("Game", back_populates="user", cascade="all, delete")
 
     deck = relationship("Deck", back_populates="user", cascade="all, delete")
     training_sessions = relationship("TrainingSession", back_populates="user", cascade="all, delete")
@@ -96,6 +97,8 @@ class Deck(Base):
     rusty = Column(Boolean, default=False)
     studying = Column(Boolean, default=False)
     slot_order = Column(SmallInteger, default=0)
+    game_id = Column(Integer, ForeignKey("games.id", ondelete="CASCADE"))
+    game = relationship("Game", back_populates="deck")
 
     __table_args__ = (UniqueConstraint("user_id", "card_id"),)
 
@@ -129,3 +132,14 @@ class TrainingCard(Base):
 
     training_session = relationship("TrainingSession", back_populates="training_cards")
     card = relationship("Card", back_populates="training_cards")
+
+class Game(Base):
+    __tablename__ = "games"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+    name = Column(String(100), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+
+    user = relationship("User", back_populates="games")
+    deck = relationship("Deck", back_populates="game", cascade="all, delete")
