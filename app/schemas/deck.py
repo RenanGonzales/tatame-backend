@@ -6,6 +6,7 @@ from app.schemas.card import CardResponse
 
 class DeckCardAdd(BaseModel):
     card_id: int
+    game_id: int
     slot_order: int = 0
 
 
@@ -19,6 +20,7 @@ class DeckCardUpdate(BaseModel):
 class DeckCardResponse(BaseModel):
     id: int
     card_id: int
+    game_id: int | None
     favorited: bool
     rusty: bool
     studying: bool

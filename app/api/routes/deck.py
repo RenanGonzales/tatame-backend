@@ -1,3 +1,5 @@
+# app/api/routes/deck.py
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
@@ -16,6 +18,18 @@ def list_deck(
     return db.query(Deck).filter(Deck.user_id == current_user.id).all()
 
 
+@router.get("/{game_id}", response_model=list[DeckCardResponse])
+def list_deck_by_game(
+    game_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return db.query(Deck).filter(
+        Deck.user_id == current_user.id,
+        Deck.game_id == game_id
+    ).all()
+
+
 @router.post("/", response_model=DeckCardResponse, status_code=201)
 def add_to_deck(
     data: DeckCardAdd,
@@ -28,7 +42,8 @@ def add_to_deck(
 
     existing = db.query(Deck).filter(
         Deck.user_id == current_user.id,
-        Deck.card_id == data.card_id
+        Deck.card_id == data.card_id,
+        Deck.game_id == data.game_id
     ).first()
     if existing:
         raise HTTPException(status_code=400, detail="Card already in deck")
