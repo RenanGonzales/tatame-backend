@@ -140,6 +140,30 @@ class Game(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     name = Column(String(100), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
+    sequences = relationship("Sequence", back_populates="game", cascade="all, delete")
 
     user = relationship("User", back_populates="games")
     deck = relationship("Deck", back_populates="game", cascade="all, delete")
+
+class Sequence(Base):
+    __tablename__ = "sequences"
+
+    id = Column(Integer, primary_key=True)
+    game_id = Column(Integer, ForeignKey("games.id", ondelete="CASCADE"))
+    name = Column(String(100), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+
+    game = relationship("Game", back_populates="sequences")
+    cards = relationship("SequenceCard", back_populates="sequence", cascade="all, delete", order_by="SequenceCard.order")
+
+
+class SequenceCard(Base):
+    __tablename__ = "sequence_cards"
+
+    id = Column(Integer, primary_key=True)
+    sequence_id = Column(Integer, ForeignKey("sequences.id", ondelete="CASCADE"))
+    card_id = Column(Integer, ForeignKey("cards.id", ondelete="CASCADE"))
+    order = Column(SmallInteger, nullable=False, default=0)
+
+    sequence = relationship("Sequence", back_populates="cards")
+    card = relationship("Card")

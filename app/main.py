@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import auth, games, positions, cards, deck, training, users
+from app.api.routes import auth, games, positions, cards, deck, sequences, training, users
 
 app = FastAPI(title="Tatame API")
 
@@ -19,6 +19,7 @@ app.include_router(cards.router)
 app.include_router(deck.router)
 app.include_router(training.router)
 app.include_router(users.router)
+app.include_router(sequences.router)
 
 @app.get("/")
 def root():
